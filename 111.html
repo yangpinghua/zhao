@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>至赵先生</title>
+    <style>
+        :root {
+            --primary-color: #ff4d88;
+            --secondary-color: #d23669;
+            --bg-color: #ffe6f2;
+            --text-color: #333;
+            --white: #fff;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            transition: background-color 0.5s;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            color: var(--secondary-color);
+        }
+        
+        .photo-frame {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border: 10px solid var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .photo-frame:hover {
+            transform: rotate(-2deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .photo-frame:hover img {
+            transform: scale(1.1);
+        }
+        
+        .message {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 1.2em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+        }
+        
+        .heart {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            animation: beat 1s infinite alternate;
+            display: inline-block;
+        }
+        
+        @keyframes beat {
+            to { transform: scale(1.2); }
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(210,54,105,0.4);
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(210,54,105,0.6);
+        }
+        
+        button:hover::before {
+            opacity: 1;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-style: italic;
+            color: var(--secondary-color);
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(210,54,105,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-dot.active {
+            background-color: var(--secondary-color);
+            transform: scale(1.2);
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart-shape {
+            position: absolute;
+            opacity: 0;
+            font-size: 20px;
+            color: var(--primary-color);
+            animation: float 5s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .music-control i {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        .special-response {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        
+        .special-response.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .special-response h2 {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .special-response button {
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- 音乐控制 -->
+    <div class="music-control" onclick="toggleMusic()">
+        <i class="fas fa-music"></i>
+    </div>
+    
+    <!-- 浮动爱心背景 -->
+    <div class="floating-hearts" id="hearts-container"></div>
+    
+    <!-- 特殊响应 -->
+    <div class="special-response" id="specialResponse">
+        <h2 id="responseText">❤ 我也想你啦！ ❤</h2>
+        <button onclick="closeResponse()">继续</button>
+    </div>
+    
+    <!-- 首页 -->
+    <div class="container page active" id="page1">
+        <h1>致 <span class="heart">❤</span> 亲爱的赵先生 <span class="heart">❤</span></h1>
+        
+        <div class="photo-frame">
+            <!-- 替换成你的照片路径 -->
+            <img src="\Users\USER\Desktop\yy.jpg" alt="我们">
+        </div>
+        
+        <div class="message">
+            <p>缘分这东西真的很奇妙</p>
+            <p>在这个有80亿人的世界里</p>
+            <p>两个陌生人相遇的概率只有0.00487%</p>
+            <p>比中奖概率还要低</p>
+            <p>而在这微小的可能性中，我们遇见了彼此</p>
+            <p>我们的故事很简单</p>
+            <p>遇见，吸引，喜欢，在一起</p>
+            <p>我想说：<strong>与你相遇，何其有幸</strong>，所以你好，我的0.00487</p>
+            <p style="font-size: 1.5em; color: var(--primary-color);">今天你想我了吗？</p>
+        </div>
+        
+        <div class="btn-group">
+            <button onclick="showResponseAndNext('❤ 我也想你啦！ ❤')">想</button>
+            <button onmouseover="moveButton(this)">不想</button>
+        </div>
+        
+        <div class="footer">
+            <p>—— 🐏小杨同学</p>
+        </div>
+    </div>
+    
+    <!-- 第二页 -->
+    <div class="container page" id="page2">
+        <h1>赵先生 <span class="heart">❤</span></h1>
+        
+        <div class="photo-frame">
+            <!-- 替换成你的照片路径 -->
+            <img src="\Users\USER\Desktop\1.jpg" alt="喜欢">
+        </div>
+        
+        <div class="message">
+            <p>还记得我们第一次见面的场景吗？</p>
+            <p>虽然都带着青涩</p>
+            <p>却意外地自在</p>
+            <p>很庆幸遇见了你</p>
+            <p>每一个和你在一起的瞬间</p>
+            <p>都是我最珍贵的记忆</p>
+            <p>都让我们的故事更加完整</p>
+            <p>今天有没有更喜欢我一点</p>
+        </div>
+        
+        <div class="btn-group">
+            <button onclick="showResponseAndNext('❤ 我今天超级喜欢你！ ❤')">有</button>
+            <button onmouseover="moveButton(this)">没有</button>
+        </div>
+        
+        <div class="footer">
+            <p>—— 小🐏很喜欢你</p>
+        </div>
+    </div>
+    
+    <!-- 第三页 -->
+    <div class="container page" id="page3">
+        <h1>想对你说 <span class="heart">❤</span></h1>
+        
+        <div class="message">
+            <p>赵先生，有些话我想告诉你：</p>
+            <p>在每一个见不到你的日子里</p>
+            <p>都很想你</p>
+            <p>慢慢积攒思念</p>
+            <p>慢慢期待下一次见面</p>
+            <p>谢谢你出现在我的生命里</p>
+            <p>谢谢你包容我的不完美</p>
+            <p>未来的路，我想和你一起走</p>
+            <p>无论是晴天还是雨天</p>
+            <p>只要有你在身边，就是最好的时光</p>
+            <p style="font-size: 1.5em; color: var(--primary-color);">我很想你，你呢？</p>
+        </div>
+        
+        <div class="photo-frame">
+            <!-- 替换成你的照片路径 -->
+            <img src="\Users\USER\Desktop\2.jpg" alt="想你">
+        </div>
+        
+        <div class="btn-group">
+            <button onclick="showResponseAndNext('❤ 这才对嘛 ❤')">我也想你</button>
+            <button onmouseover="moveButton(this)">我不想</button>
+        </div>
+        
+        <div class="footer">
+            <p>—— 小🐏想你啦</p>
+        </div>
+    </div>
+    
+    <!-- 第四页 -->
+    <div class="container page" id="page4">
+        <h1>我爱你 <span class="heart">❤</span></h1>
+        
+        <div class="message">
+            <p>异地恋固然有距离</p>
+            <p>但爱没学过地理</p>
+            <p>尽管我们相隔千里</p>
+            <p>但我们的心永远不分开</p>
+            <p>只要我们足够相爱</p>
+            <p>时间和距离不值一提</p>
+            <p>期待我们的下次见面</p>
+            <p>赵先生：</p>
+            <p style="font-size: 1.5em; color: var(--primary-color);">我会带着积攒已久的思念来见你</p>
+            <p>不见面的时候</p>
+            <p>除了好好生活</p>
+            <p>就是期待与你见面</p>
+            <p style="font-size: 1.5em; color: var(--primary-color);">今天你也会为我心动吗？</p>
+        </div>
+        
+        <div class="photo-frame">
+            <!-- 替换成你的照片路径 -->
+            <img src="\Users\USER\Desktop\3.jpg" alt="心动">
+        </div>
+        
+        <div class="btn-group">
+            <button onclick="showResponse('❤ 今天超级超级想你 ❤')">会</button>
+            <button onmouseover="moveButton(this)">不会</button>
+            <button onclick="goToPage(1)">回到心动的起点</button>
+        </div>
+        
+        <div class="footer">
+            <p>—— 小🐏今天很想你</p>
+        </div>
+    </div>
+    
+    <!-- 页面导航点 -->
+    <div class="navigation">
+        <div class="nav-dot active" onclick="goToPage(1)"></div>
+        <div class="nav-dot" onclick="goToPage(2)"></div>
+        <div class="nav-dot" onclick="goToPage(3)"></div>
+        <div class="nav-dot" onclick="goToPage(4)"></div>
+    </div>
+    
+    <!-- 音频元素 -->
+    <audio id="bgMusic" loop>
+        <source src="https://y.qq.com/n/ryqq/mv/010a4jxo17d6HO" type="audio/mpeg">
+        <!-- 替换成你喜欢的音乐链接 -->
+    </audio>
+
+    <script>
+        // 当前页面索引
+        let currentPage = 1;
+        const totalPages = 4;
+        let musicPlaying = false;
+        const bgMusic = document.getElementById('bgMusic');
+        
+        // 切换页面函数
+        function goToPage(pageNum) {
+            document.querySelector(`.page.active`).classList.remove('active');
+            document.querySelector(`#page${pageNum}`).classList.add('active');
+            
+            // 更新导航点
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === pageNum - 1);
+            });
+            
+            currentPage = pageNum;
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
+        }
+        
+        function prevPage() {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        }
+        
+        // 移动"不想"按钮
+        function moveButton(btn) {
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            btn.style.position = 'absolute';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            
+            // 显示提示
+            showResponse('真的吗？思考思考再做选择~');
+        }
+        
+        // 显示响应并跳转下一页
+        function showResponseAndNext(message) {
+            const response = document.getElementById('specialResponse');
+            const responseText = document.getElementById('responseText');
+            
+            responseText.textContent = message;
+            response.classList.add('active');
+            
+            // 如果是最后一页，不自动跳转
+            if (currentPage < totalPages) {
+                setTimeout(() => {
+                    nextPage();
+                    response.classList.remove('active');
+                }, 1500);
+            }
+        }
+        
+        // 关闭响应
+        function closeResponse() {
+            document.getElementById('specialResponse').classList.remove('active');
+        }
+        
+        // 显示响应消息
+        function showResponse(message) {
+            const response = document.getElementById('specialResponse');
+            const responseText = document.getElementById('responseText');
+            
+            responseText.textContent = message;
+            response.classList.add('active');
+            
+            setTimeout(() => {
+                response.classList.remove('active');
+            }, 1500);
+        }
+        
+        // 创建浮动爱心
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartCount = 20;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart-shape');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = 5 + Math.random() * 10 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+        
+        // 切换音乐
+        function toggleMusic() {
+            const musicControl = document.querySelector('.music-control i');
+            
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicControl.classList.remove('fa-pause');
+                musicControl.classList.add('fa-music');
+            } else {
+                bgMusic.play().catch(e => console.log('自动播放被阻止，请手动点击播放'));
+                musicControl.classList.remove('fa-music');
+                musicControl.classList.add('fa-pause');
+            }
+            
+            musicPlaying = !musicPlaying;
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createHearts();
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                    to { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 尝试自动播放音乐（可能会被浏览器阻止）
+            bgMusic.volume = 0.3;
+            document.querySelector('.music-control').addEventListener('click', function() {
+                // 用户交互后可以播放音乐
+                if (musicPlaying) {
+                    bgMusic.pause();
+                } else {
+                    bgMusic.play();
+                }
+                musicPlaying = !musicPlaying;
+            });
+        });
+    </script>
+</body>
+</html>
